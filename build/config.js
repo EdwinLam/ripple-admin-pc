@@ -1,4 +1,3 @@
-
 module.exports = {
   NODE_ENV: '"dev"',
   BASE_API: '"http://localhost:3000"',

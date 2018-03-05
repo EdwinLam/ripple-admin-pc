@@ -1,6 +1,5 @@
 <style lang="less">
     @import '../../styles/common.less';
-    @import './user.less';
 </style>
 
 <template>
@@ -39,7 +38,7 @@ export default {
     },
     methods: {
         init () {
-
+          
         },
         search (data, argumentObj) {
             let res = data;

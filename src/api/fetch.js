@@ -3,7 +3,7 @@ import iView from 'iview'
 import AuthUtil from '@/utils/AuthUtil'
 import router from '@/router'
 
-
+console.log( process.env.BASE_API)
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
