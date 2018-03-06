@@ -64,9 +64,6 @@ export default {
                     phone: this.form.userName,
                     password: this.form.password
                   })
-                    this.$router.push({
-                        name: 'home_index'
-                    });
                 }
             });
         }

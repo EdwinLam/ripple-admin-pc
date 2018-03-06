@@ -1,31 +1,52 @@
 import AuthUtil from '@/utils/AuthUtil'
 import AuthApi from '@/api/AuthApi'
-import {router} from '@/router/index';
+import accountApi from '@/api/accountApi'
+import { router } from '@/router/index';
 import iView from 'iview';
 
-const state={
-    userInfo:{},
-    loginState:'offLine'
+const state = {
+  user: {},
+  account: {},
+  loginState: 'offLine'
 }
 const actions = {
-  async login({commit},{phone,password}){
-    const res = await AuthApi.login({phone,password})
-    if(res.success){
+  async recoverStatus({commit}){
+    let isSuccess = false
+    if (AuthUtil.getToken() && AuthUtil.getToken() != 'undefined') {
+      const res = await accountApi.getAccount()
+      commit('loginSuccess', res)
+    } else {
+      commit('loginFail')
+    }
+  },
+  async login({commit}, {phone, password}){
+    const res = await AuthApi.login({phone, password})
+    commit(res.success ? 'loginSuccess' : 'loginFail', res)
+    if (res.success) {
       router.push({
         name: 'home_index'
       })
-      AuthUtil.setToken(res.data.token)
-      iView.Message.success(res.message)
-    }else{
-      AuthUtil.removeToken()
-      iView.Message.error(res.message)
     }
+    iView.Message.success(res.message)
   }
 }
-const mutations={
-  loginSuccess(state,userInfo){
-    state.userInfo = userInfo
+const mutations = {
+  loginSuccess(state, {data, message}){
+    if (data.token)
+      AuthUtil.setToken(data.token)
+    state.account = data.account
+    state.user = data.user
     state.loginState = 'onLine'
+
+  },
+  loginFail(state){
+    AuthUtil.removeToken()
+    state.account = {}
+    state.user = {}
+    state.loginState = 'offLine'
+    router.push({
+      name: 'login'
+    })
   },
   logout (state, vm) {
     AuthUtil.removeToken()
@@ -45,7 +66,7 @@ const mutations={
   }
 
 }
-const user ={
+const user = {
   state,
   actions,
   mutations
