@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        <Table :ref="refs" :columns="columnsList" :data="thisTableData" border disabled-hover></Table>
+        <Table :loading="loading" :ref="refs" :columns="columnsList" :data="thisTableData" border disabled-hover></Table>
     </div>
 </template>
 
@@ -137,6 +137,10 @@ const cellInput = (vm, h, param, item) => {
 export default {
     name: 'canEditTable',
     props: {
+        loading: {
+          type: Boolean,
+          default: false
+        },
         refs: String,
         columnsList: Array,
         value: Array,

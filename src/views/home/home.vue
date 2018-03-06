@@ -18,7 +18,7 @@
                                 <Col span="16" style="padding-left:6px;">
                                     <Row class-name="made-child-con-middle" type="flex" align="middle">
                                         <div>
-                                            <b class="card-user-infor-name">Admin</b>
+                                            <b class="card-user-infor-name">{{user.userName}}</b>
                                             <p>super admin</p>
                                         </div>
                                     </Row>
@@ -186,6 +186,7 @@ import countUp from './components/countUp.vue';
 import inforCard from './components/inforCard.vue';
 import mapDataTable from './components/mapDataTable.vue';
 import toDoListItem from './components/toDoListItem.vue';
+import { mapState } from 'vuex'
 
 export default {
     name: 'home',
@@ -231,6 +232,9 @@ export default {
         };
     },
     computed: {
+      ...mapState({
+        user: state => state.user.user
+      }),
         avatorPath () {
             return localStorage.avatorImgPath;
         }

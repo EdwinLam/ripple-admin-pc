@@ -1,6 +1,6 @@
 import AuthUtil from '@/utils/AuthUtil'
 import AuthApi from '@/api/AuthApi'
-import accountApi from '@/api/accountApi'
+import accountApi from '../../api/AccountApi'
 import { router } from '@/router/index';
 import iView from 'iview';
 
@@ -16,12 +16,12 @@ const actions = {
       const res = await accountApi.getAccount()
       commit('loginSuccess', res)
     } else {
-      commit('loginFail')
+      commit('logout')
     }
   },
   async login({commit}, {phone, password}){
     const res = await AuthApi.login({phone, password})
-    commit(res.success ? 'loginSuccess' : 'loginFail', res)
+    commit(res.success ? 'loginSuccess' : 'logout', res)
     if (res.success) {
       router.push({
         name: 'home_index'
@@ -39,18 +39,14 @@ const mutations = {
     state.loginState = 'onLine'
 
   },
-  loginFail(state){
-    AuthUtil.removeToken()
-    state.account = {}
-    state.user = {}
-    state.loginState = 'offLine'
-    router.push({
-      name: 'login'
-    })
-  },
   logout (state, vm) {
     AuthUtil.removeToken()
     state.loginState = 'offLine'
+    state.account = {}
+    state.user = {}
+    router.push({
+      name: 'login'
+    })
     // 恢复默认样式
     let themeLink = document.querySelector('link[name="theme"]');
     themeLink.setAttribute('href', '');

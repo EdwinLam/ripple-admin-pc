@@ -7,7 +7,7 @@
         <Card>
             <p slot="title">
                 <Icon type="person"></Icon>
-                用户管理
+                账号管理
             </p>
             <Row>
                 <Input v-model="searchConName2" @on-change="handleSearch2" icon="search" placeholder="请输入姓名搜搜..." style="width: 200px" />
@@ -39,9 +39,6 @@ export default {
     methods: {
         init () {
           
-        },
-        queryPage:function(){
-
         },
         search (data, argumentObj) {
             let res = data;

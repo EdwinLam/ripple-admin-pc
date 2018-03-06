@@ -67,13 +67,15 @@ export const otherRouter = {
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     {
-        path: '/access',
-        icon: 'key',
-        name: 'access',
+        path: '/permission',
+        icon: 'eye',
+        name: 'permission ',
         title: '权限管理',
         component: Main,
         children: [
-            { path: 'index', title: '权限管理', name: 'access_index', component: () => import('@/views/access/access.vue') }
+          { icon:'android-list',path: 'account', title: '账号管理', name: 'account', component: () => import('@/views/permission/account/account.vue') },
+          { icon:'person',path: 'user', title: '用户管理', name: 'user', component: () => import('@/views/permission/user.vue') },
+          { icon:'person-stalker',path: 'role', title: '角色管理', name: 'role', component: () => import('@/views/permission/role.vue') }
         ]
     },
     {
