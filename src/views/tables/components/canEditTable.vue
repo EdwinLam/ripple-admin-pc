@@ -9,6 +9,24 @@
 </template>
 
 <script>
+const customButton = (vm, h, currentRow, index,item) =>{
+  return h('Button', {
+    props: {
+      type: 'default',
+      loading: currentRow.saving
+    },
+    style: {
+      margin: '0 5px'
+    },
+    on: {
+      'click': () => {
+        vm.$emit('on-'+item.key+'-click', vm.handleBackdata(vm.thisTableData), index);
+      }
+    }
+  }, item.name);
+}
+
+
 const editButton = (vm, h, currentRow, index) => {
     return h('Button', {
         props: {
@@ -52,7 +70,7 @@ const deleteButton = (vm, h, currentRow, index) => {
         },
         on: {
             'on-ok': () => {
-                vm.thisTableData.splice(index, 1);
+//                vm.thisTableData.splice(index, 1);
                 vm.$emit('input', vm.handleBackdata(vm.thisTableData));
                 vm.$emit('on-delete', vm.handleBackdata(vm.thisTableData), index);
             }
@@ -141,6 +159,7 @@ export default {
           type: Boolean,
           default: false
         },
+        customName:String,
         refs: String,
         columnsList: Array,
         value: Array,
@@ -255,10 +274,13 @@ export default {
                         let currentRowData = this.thisTableData[param.index];
                         let children = [];
                         item.handle.forEach(item => {
-                            if (item === 'edit') {
+                            if (item.type === 'edit') {
                                 children.push(editButton(this, h, currentRowData, param.index));
-                            } else if (item === 'delete') {
+                            } else if (item.type === 'delete') {
                                 children.push(deleteButton(this, h, currentRowData, param.index));
+                            } else if(item.type === 'custom') {
+                              children.push(customButton(this, h, currentRowData, param.index,item));
+
                             }
                         });
                         return h('div', children);

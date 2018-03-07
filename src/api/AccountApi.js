@@ -26,6 +26,15 @@ export default class AccountApi {
       method: 'delete'
     })
   }
+  static save ({phone,email}) {
+    return fetch({
+      url: '/api/account/save',
+      method: 'post',
+      data:{
+        phone,email
+      }
+    })
+  }
   static update (id,{phone,email}) {
     let data = {}
     if(phone)data.phone=phone
