@@ -13,10 +13,34 @@ export default class UserApi {
   static unBindUser (id) {
     return fetch({
       url: '/api/user/unBindUser',
-      method: 'get',
-      params:{
+      method: 'post',
+      data:{
         id
       }
     })
   }
+  static bindUser ({accountId,id}) {
+    return fetch({
+      url: '/api/user/bindUser',
+      method: 'post',
+      data:{
+        accountId,id
+      }
+    })
+  }
+  static findBindUserPage ({ phone,pageNo,pageSize}) {
+    let params = {
+      phone,pageNo,pageSize
+    }
+    if(!phone||phone==''){
+      delete params.phone
+    }
+    return fetch({
+      url: '/api/user/findBindUserPage',
+      method: 'get',
+      params
+    })
+  }
+
+
 }

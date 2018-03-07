@@ -10,8 +10,9 @@
                 账号管理
             </p>
             <account-table ref="accountTable" @bind-mange="bindMange" @open-add="openAdd"></account-table>
-            <bind-mange ref="bindMange"></bind-mange>
+            <bind-mange ref="bindMange" @on-bind-user-click="bindUser"></bind-mange>
             <add-account ref="addAccount" @add-account-suc="queryPage(1)"></add-account>
+            <bind-user ref="bindUser" @on-bind-suc="updateBindMange"></bind-user>
         </Card>
     </div>
 </template>
@@ -20,10 +21,12 @@
   import addAccount from './components/addAccount.vue'
   import bindMange from './components/bindMange'
   import accountTable from './components/accountTable'
+  import bindUser from './components/bindUser.vue'
+
   export default {
     name: 'account',
     components: {
-      bindMange, addAccount, accountTable
+      bindMange, addAccount, accountTable,bindUser
     },
     data () {
       return {};
@@ -37,6 +40,12 @@
       },
       bindMange(items, index){
         this.$refs['bindMange'].open(items[index].id)
+      },
+      bindUser(id){
+        this.$refs['bindUser'].open(id)
+      },
+      updateBindMange(){
+        this.$refs['bindMange'].query()
       }
     },
     mounted () {

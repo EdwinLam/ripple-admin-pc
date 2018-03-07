@@ -1,9 +1,11 @@
 <template>
     <Modal :width="900" v-model="isShow" :title="'绑定管理'" >
         <Row style="padding: 10px">
-            <Button type="primary" @click="openAdd" style="float:right">绑定用户</Button>
+            <Button type="primary"  style="float:right" @click="openBindUser">绑定用户</Button>
         </Row>
         <can-edit-table :loading="loading"  v-model="dataItems" :columns-list="columns" @on-unbind-click="unbind"></can-edit-table>
+        <div slot="footer">
+        </div>
     </Modal>
 </template>
 <script>
@@ -26,6 +28,9 @@
       }
     },
     methods: {
+      openBindUser(){
+        this.$emit('on-bind-user-click',this.id)
+      },
       async open(id){
         this.id=id
         this.isShow=true

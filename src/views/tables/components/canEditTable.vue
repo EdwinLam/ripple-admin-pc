@@ -279,8 +279,17 @@ export default {
                             } else if (item.type === 'delete') {
                                 children.push(deleteButton(this, h, currentRowData, param.index));
                             } else if(item.type === 'custom') {
-                              children.push(customButton(this, h, currentRowData, param.index,item));
-
+                              let isShow =true
+                              if(item.condition){
+                                for(let key in item.condition){
+                                  console.log(currentRowData)
+                                  isShow=isShow&&currentRowData[key]==item.condition[key]
+                                }
+                              }
+                              if(isShow)
+                                children.push(customButton(this, h, currentRowData, param.index,item))
+                              else if(item.visibleText)
+                                children.push(item.visibleText)
                             }
                         });
                         return h('div', children);
