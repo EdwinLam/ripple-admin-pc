@@ -79,6 +79,18 @@ export const appRouter = [
         ]
     },
     {
+        path: '/mall',
+        icon: 'eye',
+        name: 'mall ',
+        title: '商城管理',
+        component: Main,
+        children: [
+          { icon:'android-list',path: 'type', title: '类型管理', name: 'type', component: () => import('@/views/mall/type/type.vue') },
+          { icon:'person',path: 'attribute', title: '属性管理', name: 'attribute', component: () => import('@/views/permission/user.vue') },
+          { icon:'person-stalker',path: 'item', title: '物品管理', name: 'item', component: () => import('@/views/permission/role.vue') }
+        ]
+    },
+    {
         path: '/access-test',
         icon: 'lock-combination',
         title: '权限测试页',
