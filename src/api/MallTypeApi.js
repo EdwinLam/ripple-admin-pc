@@ -7,6 +7,12 @@ export default class MallTypeApi {
       method: 'get'
     })
   }
+  static findBaseType () {
+    return fetch({
+      url: '/api/mall/type/findBaseType',
+      method: 'get'
+    })
+  }
   static destroy (id) {
     return fetch({
       url: '/api/mall/type/'+id,
