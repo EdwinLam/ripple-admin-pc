@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-show="visible">
         <Card style="padding-bottom:50px">
             <p slot="title">
                 <Icon type="person"></Icon>
@@ -23,20 +23,19 @@
                 </div>
             </div>
         </Card>
-
     </div>
 </template>
 <script>
   import MallAttributeApi from '@/api/MallAttributeApi'
-  import MallTypeApi from '@/api/MallTypeApi'
   import {formatDate} from '@/utils/DateUtil'
 
   export default {
     data () {
       return {
+        visible:false,
+        dataItems:[],
         typeItems:[],
         selectedType:0,
-        dataItems:[],
         dataColumns: [
           {
             title: '名称',
@@ -51,29 +50,38 @@
                 h('Button', {
                   props: {
                     type: 'primary',
-                    size: 'small'
                   },
                   style: {
                     marginRight: '5px'
                   },
                   on: {
                     click: () => {
-                      this.show(params.index)
+                      this.openEdit(params,params.index)
                     }
                   }
                 }, '修改'),
-                h('Button', {
+                h('Poptip', {
                   props: {
-                    type: 'error',
-                    size: 'small'
+                    confirm: true,
+                    title: '您确定要删除这条数据吗?',
+                    transfer: true
                   },
                   on: {
-                    click: () => {
-                      this.remove(params.index)
+                    'on-ok': () => {
+                      this.destroy(params,params.index)
                     }
                   }
-                }, '删除')
-              ]);
+                }, [
+                  h('Button', {
+                    style: {
+                      margin: '0 5px'
+                    },
+                    props: {
+                      type: 'error',
+                      placement: 'top'
+                    }
+                  }, '删除')
+                ])              ]);
             }
           }
         ],
@@ -81,26 +89,43 @@
         total: 0,
         phone: '',
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 10
       }
     },
     methods: {
+      show({typeItems,selectedType,initData}){
+        this.visible = true
+        this.typeItems = typeItems
+        this.selectedType = selectedType
+        if(initData)
+            this.init()
+      },
       async init () {
-        await this.findBaseType()
-        await this.queryPage()
+        await this.queryPage(1)
+        this.isInit = false
       },
       onChange(){
-        this.queryPage()
+        this.queryPage(1)
+      },
+      openDel(){
       },
       openAdd(){
-        this.$router.push({ name: 'addAttribute'})
+        this.visible = false
+        this.$emit('open-add')
       },
-      async findBaseType(){
-        const res = await MallTypeApi.findBaseType()
-        this.typeItems=res.data.map(el=>{return {label:el.typeName,value:el.id}})
-        this.selectedType =this.typeItems.length?this.typeItems[0].value:0
+      openEdit(val, index){
+        const item = this.dataItems[index]
+        this.visible = false
+        this.$emit('open-edit',item)
+      },
+      async destroy(val, index){
+        const item = this.dataItems[index]
+        const res = await MallAttributeApi.destroy(item.id)
+        this.$Message.success(res.message)
+        this.dataItems.splice(index,1)
       },
       async queryPage(pageNo){
+        pageNo = pageNo?pageNo:this.pageNo
         const ctx = this
         ctx.loading = true
         const res = await MallAttributeApi.queryPage({
@@ -117,9 +142,6 @@
         this.pageSize = pageSize
         this.queryPage(1)
       }
-    },
-    created () {
-      this.init();
     }
   }
 </script>
