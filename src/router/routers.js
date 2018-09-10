@@ -44,27 +44,40 @@ export default [
     ]
   },
   {
-    path: '',
-    name: 'doc',
+    path: '/purview',
+    name: 'purview',
     meta: {
-      title: '文档',
-      href: 'https://lison16.github.io/iview-admin-doc/#/',
-      icon: 'ios-book'
-    }
-  },
-  {
-    path: '/join',
-    name: 'join',
+      icon: 'logo-buffer',
+      title: '权限管理'
+    },
     component: Main,
     children: [
       {
-        path: 'join_page',
-        name: 'join_page',
+        path: 'user',
+        name: 'user',
         meta: {
-          icon: '_qq',
-          title: 'QQ群'
+          icon: 'md-trending-up',
+          title: '用户管理'
         },
-        component: () => import('@/view/join-page.vue')
+        component: () => import('@/view/purview/user/index.vue')
+      },
+      {
+        path: 'role',
+        name: 'role',
+        meta: {
+          icon: 'ios-infinite',
+          title: '角色管理'
+        },
+        component: () => import('@/view/components/drag-list/drag-list.vue')
+      },
+      {
+        path: 'permission',
+        name: 'permission',
+        meta: {
+          icon: 'md-grid',
+          title: '功能管理'
+        },
+        component: () => import('@/view/components/tables/tables.vue')
       }
     ]
   },
