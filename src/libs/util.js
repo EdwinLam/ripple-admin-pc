@@ -296,3 +296,24 @@ export const routeHasExist = (tagNavList, routeItem) => {
   })
   return res
 }
+
+/**
+ * 将树状数据转成树型结构
+ */
+export const toTreeData = (sourceData, idKey, parentIdKey) => {
+  let hash = {}
+  let list = []
+  sourceData.forEach((el) => {
+    el.children = []
+    hash[el[idKey]] = el
+  })
+  sourceData.forEach((el) => {
+    let parentEl = hash[el[parentIdKey]]
+    if (parentEl) {
+      parentEl.children.push(el)
+    } else {
+      list.push(el)
+    }
+  })
+  return list
+}
