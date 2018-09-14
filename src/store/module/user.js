@@ -1,4 +1,4 @@
-import { login, logout, getUserInfo } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 import { setToken, getToken, toTreeData } from '@/libs/util'
 import iView from 'iview'
 
@@ -12,8 +12,13 @@ export default {
   mutations: {
     setUserInfo (state, userInfo) {
       state.userInfo = userInfo
-      state.access = userInfo['permissions'].map(item => item.name)
-      state.permissionsTree = toTreeData(userInfo['permissions'], 'id', 'parentId')
+      if (userInfo['permissions']) {
+        state.access = userInfo['permissions'].map(item => item.name)
+        state.permissionsTree = toTreeData(userInfo['permissions'], 'id', 'parentId')
+      } else {
+        state.access = []
+        state.permissionsTree = []
+      }
     },
     setToken (state, token) {
       state.token = token
@@ -30,7 +35,7 @@ export default {
     },
     // 退出登录
     async handleLogOut ({ state, commit }) {
-      await logout(state.token)
+      // await logout(state.token)
       commit('setUserInfo', {})
       commit('setToken', '')
     },

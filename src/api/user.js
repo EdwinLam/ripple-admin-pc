@@ -20,6 +20,21 @@ export const getUserInfo = () => {
   })
 }
 
+export const getByCondition = () => {
+  return axios.request({
+    url: 'user/getByCondition',
+    method: 'get'
+  })
+}
+
+export const adminEdit = (data) => {
+  return axios.request({
+    data: qs.stringify(data),
+    url: 'user/admin/edit',
+    method: 'post'
+  })
+}
+
 export const logout = (token) => {
   return axios.request({
     url: 'logout',

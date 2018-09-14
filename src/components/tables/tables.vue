@@ -163,9 +163,11 @@ export default {
           },
           on: {
             'input': val => {
+              console.log(val)
               this.edittingText = val
             },
             'on-start-edit': (params) => {
+              this.edittingText = params.row[params.column.key]
               this.edittingCellId = `editting-${params.index}-${params.column.key}`
               this.$emit('on-start-edit', params)
             },
@@ -174,6 +176,8 @@ export default {
               this.$emit('on-cancel-edit', params)
             },
             'on-save-edit': (params) => {
+              console.log(this.edittingText)
+              console.log(this.value[params.row.initRowIndex][params.column.key])
               this.value[params.row.initRowIndex][params.column.key] = this.edittingText
               this.$emit('input', this.value)
               this.$emit('on-save-edit', Object.assign(params, { value: this.edittingText }))

@@ -3,6 +3,8 @@ import { SUCCESS, TOKEN_TIME_OUT } from '@/constants/ResponseCode'
 import { getToken } from '@/libs/util'
 import BaseException from '@/exception/BaseException'
 import UI from '@/libs/UI'
+import store from '@/store'
+
 class HttpRequest {
   constructor (baseUrl = baseURL) {
     this.baseUrl = baseUrl
@@ -26,9 +28,10 @@ class HttpRequest {
       return Promise.reject(error)
     })
     // 响应拦截
-    instance.interceptors.response.use(res => {
+    instance.interceptors.response.use(async res => {
       const { code, message } = res.data
       if (code === TOKEN_TIME_OUT) {
+        await store.dispatch('handleLogOut')
         window.location.href = '/login'
       } else if (code !== SUCCESS) {
         UI.warningMsg({ message })
