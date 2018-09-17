@@ -1,27 +1,54 @@
+<style lang="less">
+  @import "./index.less";
+</style>
 <template>
-  <div>
+  <div class="search">
     <Card>
+      <Row class="operation">
+        <Button @click="openAddUser" type="primary" icon="md-add">添加用户</Button>
+        <Button @click="delAll" icon="md-trash">批量删除</Button>
+        <Dropdown @on-click="handleDropdown">
+          <Button>
+            更多操作
+            <Icon type="md-arrow-dropdown" />
+          </Button>
+          <DropdownMenu slot="list">
+            <DropdownItem name="refresh">刷新</DropdownItem>
+            <DropdownItem name="exportData">导出所选数据</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </Row>
+      <Row>
+        <Alert show-icon>
+          已选择 <span class="select-count">{{selectCount}}</span> 项
+          <a class="select-clear" @click="clearSelectAll">清空</a>
+        </Alert>
+      </Row>
       <Row>
         <tables ref="tables" editable searchable search-place="top" v-model="tableData" :columns="columns" @on-delete="handleDelete" @on-save-edit="handleEdit"/>
       </Row>
+
       <!--<Button style="margin: 10px 0;" type="primary" @click="exportExcel">导出为Csv文件</Button>-->
       <Row type="flex" justify="end" class="page">
         <Page :current="1" :total="2" :page-size="2" @on-change="changePage" @on-page-size-change="changePageSize" :page-size-opts="[10,20,50]" size="small" show-total show-elevator show-sizer></Page>
       </Row>
     </Card>
+    <add-user ref="addUserModal"></add-user>
   </div>
 </template>
 
 <script>
+import AddUser from './modal/addUser'
 import Tables from '_c/tables'
-import { getByCondition, adminEdit } from '@/api/user'
+import { UserApi } from '@/api'
 export default {
   name: 'tables_page',
   components: {
-    Tables
+    Tables, AddUser
   },
   data () {
     return {
+      selectCount: 0,
       columns: [
         {
           type: 'selection',
@@ -272,13 +299,44 @@ export default {
     }
   },
   methods: {
+    openAddUser () {
+      this.$refs.addUserModal.open()
+    },
+    delAll () {
+
+    },
+    changePage () {
+
+    },
+    clearSelectAll () {
+
+    },
+    handleDropdown (name) {
+      if (name === 'exportData') {
+        if (this.selectCount <= 0) {
+          this.$Message.warning('您还未选择要导出的数据')
+          return
+        }
+        this.$Modal.confirm({
+          title: '确认导出',
+          content: '您确认要导出所选 ' + this.selectCount + ' 条数据?',
+          onOk: () => {
+            this.$refs.exportTable.exportCsv({
+              filename: '用户数据'
+            })
+          }
+        })
+      } else if (name === 'refresh') {
+        this.getUserList()
+      }
+    },
     changePageSize () {
 
     },
     async handleEdit (params) {
       console.log(params)
       params.row[params.column.key] = params.value
-      const res = await adminEdit(Object.assign(params.row, { roles: [] }))
+      const res = await UserApi.adminEdit(Object.assign(params.row, { roles: [] }))
       console.log(res)
     },
     handleDelete (params) {
@@ -291,7 +349,7 @@ export default {
     }
   },
   mounted () {
-    getByCondition().then(res => {
+    UserApi.getByCondition().then(res => {
       console.log(res)
       this.tableData = res.result.content
     })

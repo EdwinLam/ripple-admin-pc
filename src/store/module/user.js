@@ -1,4 +1,4 @@
-import { login, getUserInfo } from '@/api/user'
+import { UserApi } from '@/api'
 import { setToken, getToken, toTreeData } from '@/libs/util'
 import iView from 'iview'
 
@@ -29,7 +29,7 @@ export default {
     /* 登陆处理 */
     async handleLogin ({ commit }, { username, password }) {
       username = username.trim()
-      const res = await login({ username, password })
+      const res = await UserApi.login({ username, password })
       commit('setToken', res.result.token)
       iView.Message.success(res.message)
     },
@@ -41,7 +41,7 @@ export default {
     },
     async initData ({ state, commit }) {
       // 获取用户数据
-      const res = await getUserInfo()
+      const res = await UserApi.getUserInfo()
       console.log(res)
       commit('setUserInfo', res.result)
     }
