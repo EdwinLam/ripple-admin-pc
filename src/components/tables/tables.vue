@@ -1,12 +1,5 @@
 <template>
   <div>
-    <div v-if="searchable && searchPlace === 'top'" class="search-con search-con-top">
-      <Select v-model="searchKey" class="search-col">
-        <Option v-for="item in columns" v-if="item.key !== 'handle'" :value="item.key" :key="`search-col-${item.key}`">{{ item.title }}</Option>
-      </Select>
-      <Input @on-change="handleClear" clearable placeholder="输入关键字搜索" class="search-input" v-model="searchValue"/>
-      <Button @click="handleSearch" class="search-btn" type="primary"><Icon type="search"/>&nbsp;&nbsp;搜索</Button>
-    </div>
     <Table
       ref="tablesMain"
       :data="insideTableData"
@@ -212,12 +205,6 @@ export default {
     setDefaultSearchKey () {
       this.searchKey = this.columns[0].key !== 'handle' ? this.columns[0].key : (this.columns.length > 1 ? this.columns[1].key : '')
     },
-    handleClear (e) {
-      if (e.target.value === '') this.insideTableData = this.value
-    },
-    handleSearch () {
-      this.insideTableData = this.value.filter(item => item[this.searchKey].indexOf(this.searchValue) > -1)
-    },
     handleTableData () {
       this.insideTableData = this.value.map((item, index) => {
         let res = item
@@ -227,9 +214,6 @@ export default {
     },
     exportCsv (params) {
       this.$refs.tablesMain.exportCsv(params)
-    },
-    clearCurrentRow () {
-      this.$refs.talbesMain.clearCurrentRow()
     },
     onCurrentChange (currentRow, oldCurrentRow) {
       this.$emit('on-current-change', currentRow, oldCurrentRow)
@@ -269,7 +253,6 @@ export default {
     },
     value (val) {
       this.handleTableData()
-      this.handleSearch()
     }
   },
   mounted () {

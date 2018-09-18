@@ -35,4 +35,12 @@ export default class UserApi {
       method: 'post'
     })
   }
+
+  static add (data) {
+    return axios.request({
+      data: qs.stringify(data),
+      url: 'user/admin/add',
+      method: 'post'
+    })
+  }
 }

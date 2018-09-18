@@ -1,7 +1,7 @@
 <template>
   <div>
     <image-view ref="imageViewModal"></image-view>
-    <Modal title="添加用户" v-model="modalVisible" :mask-closable='false' :width="500" :styles="{top: '30px'}">
+    <Modal title="添加用户" v-model="visible" :mask-closable='false' :width="500" :styles="{top: '30px'}">
       <Form ref="userForm" :model="userForm" :label-width="70" :rules="userFormValidate">
         <FormItem label="用户名" prop="username">
           <Input v-model="userForm.username" autocomplete="off"/>
@@ -76,8 +76,9 @@
 <script>
 import ImageView from './imageView'
 import config from '@/config'
+import { UserApi } from '@/api'
 export default {
-  comments: {
+  components: {
     ImageView
   },
   methods: {
@@ -86,18 +87,28 @@ export default {
       this.accessToken = {
         accessToken: this.$store.state.user.token
       }
-      console.log(this.accessToken)
+    },
+    reset () {
+      this.$refs.userForm.resetFields()
     },
     open () {
-      console.log(this.accessToken)
-
-      this.modalVisible = true
+      this.reset()
+      this.visible = true
     },
     close () {
-      this.modalVisible = false
+      this.visible = false
     },
     save () {
-
+      this.$refs.userForm.validate(async valid => {
+        if (valid) {
+          this.submitLoading = true
+          await UserApi.add(this.userForm)
+          this.submitLoading = false
+          this.$UI.successMsg({ message: '添加成功' })
+          this.visible = false
+          this.$emit('ok')
+        }
+      })
     },
     selectTree () {
 
@@ -170,6 +181,11 @@ export default {
         username: [
           { required: true, message: '账号不能为空', trigger: 'blur' }
         ],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 6, message: '密码最小为6位', trigger: 'blur' }
+
+        ],
         mobile: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { validator: validateMobile, trigger: 'blur' }
@@ -180,7 +196,7 @@ export default {
         ]
       },
       submitLoading: false,
-      modalVisible: false
+      visible: false
     }
   },
   mounted () {

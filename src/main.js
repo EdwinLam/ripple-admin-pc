@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import iView from 'iview'
 import i18n from '@/locale'
+import UI from '@/libs/UI'
 import config from '@/config'
 import importDirective from '@/directive'
 import 'iview/dist/styles/iview.css'
@@ -15,6 +16,7 @@ import '@/assets/icons/iconfont.css'
 // 实际打包时应该不引入mock
 /* eslint-disable */
 if (process.env.NODE_ENV !== 'production') require('@/mock')
+Vue.prototype.$UI = UI
 
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
