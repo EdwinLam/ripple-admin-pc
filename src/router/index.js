@@ -29,7 +29,10 @@ router.beforeEach(async (to, from, next) => {
       name: 'home' // 跳转到home页
     })
   } else {
-    await store.dispatch('initData')
+    // 初始化用户权限数据
+    await store.dispatch('initUserData')
+    // 初始化共有数据
+    await store.dispatch('initCommonData')
     // 拉取用户信息，通过用户权限和跳转的页面的name来判断是否有权限访问;access必须是一个数组，如：['super_admin'] ['super_admin', 'admin']
     if (canTurnTo(to.name, store.state.access, routes)) next() // 有权限，可访问
     else next({ replace: true, name: 'error_401' }) // 无权限，重定向到401页面

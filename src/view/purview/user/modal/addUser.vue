@@ -57,10 +57,10 @@
         </Form-item>
         <FormItem label="角色分配" prop="roles">
           <Select v-model="userForm.roles" multiple>
-            <Option v-for="item in roleList" :value="item.id" :key="item.id" :label="item.name">
+            <Option v-for="item in roleItems" :value="item.id" :key="item.id" :label="item.name">
               <!-- <div style="display:flex;flex-direction:column"> -->
-              <span style="margin-right:10px;">{{ item.name }}</span>
-              <span style="color:#ccc;">{{ item.description }}</span>
+              <span style="margin-right:10px;">{{ item.roleName }}</span>
+              <span style="color:#ccc;">没有描述哦</span>
               <!-- </div> -->
             </Option>
           </Select>
@@ -168,7 +168,7 @@ export default {
       accessToken: {},
       errorPass: '',
       dataDep: [],
-      roleList: [],
+      roleItems: this.$store.state.common.roleItems,
       userForm: {
         sex: 1,
         type: 0,

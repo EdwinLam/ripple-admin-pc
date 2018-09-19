@@ -1,4 +1,5 @@
 import UserApi from './UserApi'
+import RoleApi from './RoleApi'
 export {
-  UserApi
+  UserApi, RoleApi
 }

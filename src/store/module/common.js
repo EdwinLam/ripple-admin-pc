@@ -1,49 +1,30 @@
-import { UserApi } from '@/api'
-import { setToken, toTreeData } from '@/libs/util'
-import iView from 'iview'
+import { RoleApi } from '@/api'
 /*
  * 一些公用数据获取
  */
 export default {
   state: {
     roleItems: [], // 角色列表
-    department: []// 部门列表
+    department: [], // 部门列表
+    isFinishInit: false // 初始化完成标记
   },
   mutations: {
-    setUserInfo (state, userInfo) {
-      state.userInfo = userInfo
-      if (userInfo['permissions']) {
-        state.access = userInfo['permissions'].map(item => item.name)
-        state.permissionsTree = toTreeData(userInfo['permissions'], 'id', 'parentId')
-      } else {
-        state.access = []
-        state.permissionsTree = []
-      }
+    initRoles (state, roleItems) {
+      state.roleItems = roleItems
     },
-    setToken (state, token) {
-      state.token = token
-      setToken(token)
+    finishCommonData (state) {
+      state.isFinishInit = true
     }
   },
   actions: {
     /* 登陆处理 */
-    async handleLogin ({ commit }, { username, password }) {
-      username = username.trim()
-      const res = await UserApi.login({ username, password })
-      commit('setToken', res.result.token)
-      iView.Message.success(res.message)
-    },
-    // 退出登录
-    async handleLogOut ({ state, commit }) {
-      // await logout(state.token)
-      commit('setUserInfo', {})
-      commit('setToken', '')
-    },
-    async initData ({ state, commit }) {
-      // 获取用户数据
-      const res = await UserApi.getUserInfo()
-      console.log(res)
-      commit('setUserInfo', res.result)
+    async initCommonData ({ state, commit }) {
+      if (state.isFinishInit) return
+      // 获取角色列表
+      const res = await RoleApi.getAllList()
+      commit('initRoles', res.result)
+      // 标记初始化完成
+      commit('finishCommonData')
     }
   }
 }

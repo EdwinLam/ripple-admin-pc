@@ -7,10 +7,11 @@ export default {
     userInfo: {},
     token: getToken(),
     access: [],
-    permissionsTree: []
+    permissionsTree: [],
+    isFinishInit: false
   },
   mutations: {
-    setUserInfo (state, userInfo) {
+    initUserInfo (state, userInfo) {
       state.userInfo = userInfo
       if (userInfo['permissions']) {
         state.access = userInfo['permissions'].map(item => item.name)
@@ -20,9 +21,12 @@ export default {
         state.permissionsTree = []
       }
     },
-    setToken (state, token) {
+    initToken (state, token) {
       state.token = token
       setToken(token)
+    },
+    finishUserInit (state) {
+      state.isInit = true
     }
   },
   actions: {
@@ -30,20 +34,22 @@ export default {
     async handleLogin ({ commit }, { username, password }) {
       username = username.trim()
       const res = await UserApi.login({ username, password })
-      commit('setToken', res.result.token)
+      commit('initToken', res.result.token)
       iView.Message.success(res.message)
     },
-    // 退出登录
+    /* 退出登录 */
     async handleLogOut ({ state, commit }) {
       // await logout(state.token)
-      commit('setUserInfo', {})
-      commit('setToken', '')
+      commit('initUserInfo', {})
+      commit('initToken', '')
     },
-    async initData ({ state, commit }) {
+    /* 初始化用户数据 */
+    async initUserData ({ state, commit }) {
+      if (state.isFinishInit) return
       // 获取用户数据
       const res = await UserApi.getUserInfo()
-      console.log(res)
-      commit('setUserInfo', res.result)
+      commit('initUserInfo', res.result)
+      commit('finishUserInit')
     }
   }
 }
