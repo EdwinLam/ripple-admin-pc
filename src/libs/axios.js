@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { SUCCESS, TOKEN_TIME_OUT } from '@/constants/ResponseCode'
-import { getToken } from '@/libs/util'
+import TokenUtil from '@/utils/TokenUtil'
 import BaseException from '@/exception/BaseException'
 import UI from '@/libs/UI'
 import store from '@/store'
@@ -21,7 +21,7 @@ class HttpRequest {
   interceptors (instance, url) {
     // 请求拦截
     instance.interceptors.request.use(config => {
-      const token = getToken()
+      const token = TokenUtil.getToken()
       if (token) { config.headers['accessToken'] = token }
       return config
     }, error => {

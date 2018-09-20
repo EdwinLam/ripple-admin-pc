@@ -25,7 +25,7 @@
         </Alert>
       </Row>
       <Row>
-        <Table :loading="loading" border :columns="columns" :data="data" sortable="custom" @on-sort-change="changeSort" @on-selection-change="showSelect" ref="table"></Table>
+        <Table :loading="loading" border :columns="columns" :data="userItems" sortable="custom" @on-sort-change="changeSort" @on-selection-change="showSelect" ref="table"></Table>
         <Table :columns="columns" :data="exportData" ref="exportTable" style="display:none"></Table>
       </Row>
       <Button style="margin: 10px 0;" type="primary" @click="exportExcel">导出为Csv文件</Button>
@@ -40,8 +40,9 @@
 <script>
 import AddUser from './modal/addUser'
 import Tables from '_c/tables'
-import { UserApi } from '@/api'
 import columns from './table/columns'
+import { mapState } from 'vuex'
+
 export default {
   name: 'tables_page',
   components: {
@@ -52,8 +53,6 @@ export default {
       columns,
       loading: false,
       selectCount: 0,
-      total: 0,
-      data: [],
       selectList: [],
       searchForm: {
         username: '',
@@ -71,6 +70,12 @@ export default {
         endDate: ''
       }
     }
+  },
+  computed: {
+    ...mapState({
+      userItems: state => state.user.userItems,
+      total: state => state.user.total
+    })
   },
   methods: {
     showSelect (e) {
@@ -130,10 +135,8 @@ export default {
     },
     async fetchData () {
       this.loading = true
-      const res = await UserApi.getByCondition(this.searchForm)
+      await this.$store.dispatch('queryUser', this.searchForm)
       this.loading = false
-      this.total = res.result.totalElements
-      this.data = res.result.content
     }
   },
   mounted () {

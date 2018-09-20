@@ -1,55 +1,27 @@
 import { UserApi } from '@/api'
-import { setToken, getToken, toTreeData } from '@/libs/util'
-import iView from 'iview'
-
 export default {
   state: {
-    userInfo: {},
-    token: getToken(),
-    access: [],
-    permissionsTree: [],
-    isFinishInit: false
+    userItems: [],
+    total: 0
   },
   mutations: {
-    initUserInfo (state, userInfo) {
-      state.userInfo = userInfo
-      if (userInfo['permissions']) {
-        state.access = userInfo['permissions'].map(item => item.name)
-        state.permissionsTree = toTreeData(userInfo['permissions'], 'id', 'parentId')
-      } else {
-        state.access = []
-        state.permissionsTree = []
-      }
+    setUserItems (state, items) {
+      state.userItems = items
     },
-    initToken (state, token) {
-      state.token = token
-      setToken(token)
-    },
-    finishUserInit (state) {
-      state.isInit = true
+    setTotal (state, total) {
+      state.total = total
     }
   },
   actions: {
-    /* 登陆处理 */
-    async handleLogin ({ commit }, { username, password }) {
-      username = username.trim()
-      const res = await UserApi.login({ username, password })
-      commit('initToken', res.result.token)
-      iView.Message.success(res.message)
+    /* 添加用户 */
+    async addUser ({ commit }, userData) {
+      await UserApi.add(userData)
     },
-    /* 退出登录 */
-    async handleLogOut ({ state, commit }) {
-      // await logout(state.token)
-      commit('initUserInfo', {})
-      commit('initToken', '')
-    },
-    /* 初始化用户数据 */
-    async initUserData ({ state, commit }) {
-      if (state.isFinishInit) return
-      // 获取用户数据
-      const res = await UserApi.getUserInfo()
-      commit('initUserInfo', res.result)
-      commit('finishUserInit')
+    /* 按条件查询用户 */
+    async queryUser ({ commit, state }, searchCondition) {
+      const res = await UserApi.getByCondition(searchCondition)
+      commit('setUserItems', res.result.content)
+      commit('setTotal', res.result.totalElements)
     }
   }
 }

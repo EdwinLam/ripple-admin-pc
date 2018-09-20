@@ -76,7 +76,6 @@
 <script>
 import ImageView from './imageView'
 import config from '@/config'
-import { UserApi } from '@/api'
 export default {
   components: {
     ImageView
@@ -102,7 +101,7 @@ export default {
       this.$refs.userForm.validate(async valid => {
         if (valid) {
           this.submitLoading = true
-          await UserApi.add(this.userForm)
+          await this.$store.dispatch('addUser', this.userForm)
           this.submitLoading = false
           this.$UI.successMsg({ message: '添加成功' })
           this.visible = false
@@ -168,7 +167,7 @@ export default {
       accessToken: {},
       errorPass: '',
       dataDep: [],
-      roleItems: this.$store.state.common.roleItems,
+      roleItems: this.$store.state.role.allRolesItems,
       userForm: {
         sex: 1,
         type: 0,
