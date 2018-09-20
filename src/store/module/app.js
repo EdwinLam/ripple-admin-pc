@@ -1,4 +1,4 @@
-import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, routeHasExist, toTreeData } from '@/libs/util'
+import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, routeHasExist } from '@/libs/util'
 import routers from '@/router/routers'
 import iView from 'iview'
 import { UserApi } from '@/api'
@@ -7,7 +7,6 @@ export default {
   state: {
     userInfo: {},
     token: TokenUtil.getToken(),
-    permission: [],
     access: [],
     breadCrumbList: [],
     tagNavList: [],
@@ -22,7 +21,6 @@ export default {
       state.userInfo = userInfo
       if (userInfo['permissions']) {
         state.access = userInfo['permissions'].map(item => item.name)
-        state.permissionsTree = toTreeData(userInfo['permissions'], 'id', 'parentId')
       } else {
         state.access = []
         state.permissionsTree = []

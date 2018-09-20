@@ -22,12 +22,18 @@ export default class AuthUtil {
       // 已登录且要跳转的页面是登录页
       return { name: 'home' }
     } else {
-      if (this.checkPermission(to.name)) { return {} } else { return { replace: true, name: 'error_401' } }
+      if (this.checkPermission(to)) { return {} } else { return { replace: true, name: 'error_401' } }
     }
   }
   /* 判断用户是否有指定权限 */
-  static checkPermission (name) {
-    const permissionMap = store.state.app.permission
-    return permissionMap[name] !== null
+  static checkPermission (to) {
+    if (!to.meta || !to.meta.access) { return true }
+    const name = to.name
+    console.log(store.state.app.access.some(el => {
+      return el.name === name
+    }))
+    return store.state.app.access.some(el => {
+      return el.name === name
+    })
   }
 }

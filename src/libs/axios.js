@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { SUCCESS, TOKEN_TIME_OUT } from '@/constants/ResponseCode'
-import TokenUtil from '@/utils/TokenUtil'
+import { TokenUtil } from '@/utils'
 import BaseException from '@/exception/BaseException'
 import UI from '@/libs/UI'
 import store from '@/store'
