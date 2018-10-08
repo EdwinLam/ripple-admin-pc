@@ -53,6 +53,15 @@ export default [
     component: Main,
     children: [
       {
+        path: 'department',
+        name: 'department',
+        meta: {
+          icon: 'ios-infinite',
+          title: '部门管理'
+        },
+        component: () => import('@/view/purview/department/index.vue')
+      },
+      {
         path: 'user',
         name: 'user',
         meta: {

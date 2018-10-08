@@ -84,7 +84,7 @@ export default {
     init () {
       this.uploadUrl = (process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro) + '/upload/file'
       this.accessToken = {
-        accessToken: this.$store.state.user.token
+        accessToken: this.$store.state.app.token
       }
     },
     reset () {
@@ -109,14 +109,14 @@ export default {
         }
       })
     },
+    loadDataTree (item, callback) {
+
+    },
     selectTree () {
 
     },
     viewPic () {
       this.viewImage = true
-    },
-    loadDataTree (item, callback) {
-
     },
     clearSelectDep () {
       this.userForm.departmentId = ''
@@ -141,12 +141,8 @@ export default {
       return true
     },
     handleSuccess (res, file) {
-      if (res.success === true) {
-        file.url = res.result
-        this.userForm.avatar = res.result
-      } else {
-        this.$Message.error(res.message)
-      }
+      file.url = res.data
+      this.userForm.avatar = res.data
     },
     handleError (error, file, fileList) {
       this.$Message.error(error.toString())
@@ -162,11 +158,13 @@ export default {
       }
     }
     return {
+      selectDep: [],
+      dataDep: [],
+      department: [],
       loading: false,
       uploadUrl: '',
       accessToken: {},
       errorPass: '',
-      dataDep: [],
       roleItems: this.$store.state.role.allRolesItems,
       userForm: {
         sex: 1,
