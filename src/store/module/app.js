@@ -71,7 +71,7 @@ export default {
     async initUserData ({ state, commit }) {
       // 获取用户数据
       const res = await UserApi.getUserInfo()
-      commit('setUserInfo', res.result)
+      commit('setUserInfo', res.data)
     }
   }
 }

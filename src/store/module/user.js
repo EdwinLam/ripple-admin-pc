@@ -20,8 +20,8 @@ export default {
     /* 按条件查询用户 */
     async queryUser ({ commit, state }, searchCondition) {
       const res = await UserApi.getByCondition(searchCondition)
-      commit('setUserItems', res.result.content)
-      commit('setTotal', res.result.totalElements)
+      commit('setUserItems', res.data.content)
+      commit('setTotal', res.data.totalElements)
     }
   }
 }

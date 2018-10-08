@@ -17,7 +17,7 @@ export default {
     async initAllRoles ({ state, commit }) {
       // 获取角色列表
       const res = await RoleApi.getAllList()
-      commit('initAllRoles', res.result)
+      commit('initAllRoles', res.data)
     }
   }
 }

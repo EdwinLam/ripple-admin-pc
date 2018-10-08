@@ -203,3 +203,15 @@ export default {
   }
 }
 </script>
+<style>
+  .ivu-poptip, .ivu-poptip-rel {
+    display: inline-block;
+    width: 100%;
+  }
+  .search .operation {
+    margin-bottom: 2vh;
+  }
+  .br button, .operation button {
+    margin-right: 5px;
+  }
+</style>

@@ -50,6 +50,7 @@ export default {
   },
   data () {
     return {
+      exportData: [],
       columns,
       loading: false,
       selectCount: 0,
