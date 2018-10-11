@@ -8,7 +8,12 @@ export default class DepartmentApi {
       method: 'get'
     })
   }
-
+  static get (id) {
+    return axios.request({
+      url: 'department/get/' + id,
+      method: 'get'
+    })
+  }
   static add (data) {
     return axios.request({
       data: qs.stringify(data),

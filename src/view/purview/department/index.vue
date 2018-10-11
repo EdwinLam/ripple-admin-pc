@@ -8,7 +8,6 @@
             <Button @click="add" type="primary" icon="md-add">添加子部门</Button>
             <Button @click="addRoot" icon="md-add">添加一级部门</Button>
             <Button @click="delAll" icon="md-trash">批量删除</Button>
-            <Button @click="getParentList" icon="md-refresh">刷新</Button>
           </Row>
           <Row type="flex" justify="start" class="code-row-bg">
             <Col span="6">
@@ -16,7 +15,7 @@
                 当前选择编辑： <span class="select-count">{{editTitle}}</span>
                 <a class="select-clear" v-if="form.id" @click="canelEdit">取消选择</a>
               </Alert>
-              <Tree :data="data" :load-data="loadData" show-checkbox @on-check-change="changeSelect" @on-select-change="selectTree"></Tree>
+              <Tree :data="departmentTree" :load-data="loadData" show-checkbox @on-check-change="changeSelect" @on-select-change="selectTree"></Tree>
               <Spin size="large" fix v-if="loading"></Spin>
             </Col>
             <Col span="9">
@@ -25,8 +24,8 @@
                   <Poptip trigger="click" placement="right-start" title="选择上级部门" width="250">
                     <Input v-model="form.parentTitle" readonly/>
                     <div slot="content" style="position:relative;min-height:5vh">
-                      <Tree :data="dataEdit" :load-data="loadData" @on-select-change="selectTreeEdit"></Tree>
-                      <Spin size="large" fix v-if="loadingEdit"></Spin>
+                      <Tree :data="departmentTree" :load-data="loadData" @on-select-change="selectTreeEdit"></Tree>
+                      <Spin size="large" fix v-if="loading"></Spin>
                     </div>
                   </Poptip>
                 </FormItem>
@@ -82,18 +81,12 @@
 </template>
 
 <script>
-import {
-  initDepartment,
-  loadDepartment,
-  addDepartment,
-  editDepartment,
-  deleteDepartment
-} from '@/api/index'
+import { mapState } from 'vuex'
 export default {
   name: 'department-manage',
   data () {
     return {
-      loading: true,
+      loading: false,
       loadingEdit: true,
       menuModalVisible: false,
       selectList: [],
@@ -120,67 +113,24 @@ export default {
       dataEdit: []
     }
   },
+  computed: {
+    ...mapState({
+      departmentTree: state => state.department.departmentTree
+    })
+  },
   methods: {
-    init () {
-      this.getParentList()
-      this.getParentListEdit()
+    async init () {
+      await this.loadData()
     },
-    getParentList () {
-      this.loading = true
-      initDepartment().then(res => {
-        this.loading = false
-        if (res.success === true) {
-          res.result.forEach(function (e) {
-            if (e.isParent) {
-              e.loading = false
-              e.children = []
-            }
-          })
-          this.data = res.result
-        }
-      })
-    },
-    getParentListEdit () {
-      this.loadingEdit = true
-      initDepartment().then(res => {
-        this.loadingEdit = false
-        if (res.success === true) {
-          res.result.forEach(function (e) {
-            if (e.isParent) {
-              e.loading = false
-              e.children = []
-            }
-          })
-          // 头部加入一级
-          let first = {
-            id: '0',
-            title: '一级部门'
-          }
-          res.result.unshift(first)
-          this.dataEdit = res.result
-        }
-      })
-    },
-    loadData (item, callback) {
-      loadDepartment(item.id).then(res => {
-        if (res.success === true) {
-          res.result.forEach(function (e) {
-            if (e.isParent) {
-              e.loading = false
-              e.children = []
-            }
-          })
-          callback(res.result)
-        }
-      })
+    async loadData (item, callback) {
+      let params = []
+      await this.$store.dispatch('initDepartmentByParentId', item && item.id ? item.id : 0)
+      if (callback) {
+        callback(params)
+      }
     },
     selectTree (v) {
       if (v.length > 0) {
-        if (Number(v[0].status) === 0) {
-          this.editStatus = true
-        } else {
-          this.editStatus = false
-        }
         // 转换null为""
         for (let attr in v[0]) {
           if (v[0][attr] === null) {
@@ -194,8 +144,6 @@ export default {
       }
     },
     canelEdit () {
-      this.isMenu = false
-      this.isButton = false
       this.$refs.form.resetFields()
       delete this.form.id
       this.editTitle = ''
@@ -262,7 +210,7 @@ export default {
       }
     },
     submitAdd () {
-      this.$refs.formAdd.validate(valid => {
+      this.$refs.formAdd.validate(async (valid) => {
         if (valid) {
           this.submitLoading = true
           if (this.formAdd.sortOrder === null) {
@@ -271,14 +219,11 @@ export default {
           if (this.formAdd.buttonType === null) {
             this.formAdd.buttonType = ''
           }
-          addDepartment(this.formAdd).then(res => {
-            this.submitLoading = false
-            if (res.success === true) {
-              this.$Message.success('添加成功')
-              this.init()
-              this.menuModalVisible = false
-            }
-          })
+          await this.$store.dispatch('addDepartment', this.formAdd)
+          this.submitLoading = false
+          this.$Message.success('添加成功')
+          this.init()
+          this.menuModalVisible = false
         }
       })
     },
@@ -318,21 +263,13 @@ export default {
       this.$Modal.confirm({
         title: '确认删除',
         content: '您确认要删除所选的 ' + this.selectCount + ' 条数据?',
-        onOk: () => {
-          let ids = ''
-          this.selectList.forEach(function (e) {
-            ids += e.id + ','
-          })
-          ids = ids.substring(0, ids.length - 1)
-          deleteDepartment(ids).then(res => {
-            if (res.success === true) {
-              this.$Message.success('删除成功')
-              this.selectList = []
-              this.selectCount = 0
-              this.canelEdit()
-              this.init()
-            }
-          })
+        onOk: async () => {
+          let ids = this.selectList.map(el => el.id)
+          await this.$store.dispatch('delByIds', ids)
+          this.$Message.success('删除成功')
+          this.selectList = []
+          this.selectCount = 0
+          this.canelEdit()
         }
       })
     }

@@ -8,8 +8,6 @@ export default class AuthUtil {
     await store.dispatch('initAllRoles')
     // 初始化用户权限数据
     await store.dispatch('initUserData')
-    // 测试初始化部门额树
-    await store.dispatch('initDepartmentByParentId', 4)
   }
   /* 获取真正的跳转地址 */
   static findMyWay ({ to }) {
